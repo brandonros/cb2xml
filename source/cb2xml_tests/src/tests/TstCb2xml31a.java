@@ -10,7 +10,6 @@ import net.sf.cb2xml.Cb2Xml;
 import net.sf.cb2xml.sablecc.lexer.LexerException;
 import net.sf.cb2xml.sablecc.parser.ParserException;
 import net.sf.cb2xml.util.Parms;
-import net.sf.cb2xml.util.XmlUtils;
 
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -21,8 +20,12 @@ import common.Code;
 public class TstCb2xml31a {
 	
 
+	private static final boolean DO_COMPARE = false; 
 	
-	
+	private static final String TEMP_DIR = DO_COMPARE
+			? System.getProperty("java.io.tmpdir") + File.separator
+			: "/home/bruce/work/XmlDir/";
+
 	private final String[] COPYBOOK_LIST1 = {
 			"cpyComp3aInheritence.cbl",
 			"cpyComp.cbl",
@@ -132,9 +135,9 @@ public class TstCb2xml31a {
 
 	public void tstArray(String[] copybooks,  String dir, String font, boolean newFormat) throws IOException, SAXException, ParserConfigurationException, ParserException, LexerException  {
 		String cblFilename, xmlFilename, xmlOut;
-		String tmpDir = System.getProperty("java.io.tmpdir") + File.separator;
+		String tmpDir = DO_COMPARE ? TEMP_DIR : TEMP_DIR + "/xmlCopybookFormated/"; 
 		System.out.println(tmpDir);
-		String xmlCompare = "xmlCopybook/";
+		String xmlCompare = "xmlCopybookFormated/";
 		
 		for (String c : copybooks) {
 			xmlFilename = "xmlCpy" + c.substring(3, c.length() - 3) + "Xml";
@@ -145,32 +148,38 @@ public class TstCb2xml31a {
 			String[] args;
 			if (font == null) {
 				args = new String[] {
-					"-cobol", cblFilename, "-xml", xmlOut
+					"-cobol", cblFilename, "-xml", xmlOut, Parms.INDENT_XML_PRM
 				};
 			} else if (newFormat) {
 				args = new String[] {
-						"-cobol", cblFilename, "-xml", xmlOut, "-font", font
+						"-cobol", cblFilename, "-xml", xmlOut, "-font", font, Parms.INDENT_XML_PRM
 					};
 			} else {
+				xmlCompare = "xmlCopybookClassicFormated/";
+				if (! DO_COMPARE) {
+					xmlOut = TEMP_DIR + "/" + xmlCompare + xmlFilename;
+				}
 				args = new String[] {
-						"-cobol", cblFilename, "-xml", xmlOut, "-font", font, Parms.XML_FORMAT_PRM, "Classic"
+						"-cobol", cblFilename, "-xml", xmlOut, "-font", font, Parms.XML_FORMAT_PRM, "Classic", Parms.INDENT_XML_PRM
 					};
-				xmlCompare = "xmlCopybookClassic/";
 			}
 			
 			
 			Cb2Xml.main(args);
 
-			System.out.println(c + " --> " + xmlFilename + ":");
-			System.out.println(c + " --> " + xmlFilename + ":");
-			Document doc = Code.fileToDom(xmlOut);
 			
-			System.out.println(XmlUtils.domToString(doc));
-			System.out.println();
-		
+			if (DO_COMPARE) {
+				System.out.println(c + " --> " + xmlFilename + ":");
+				System.out.println(c + " --> " + xmlFilename + ":");
+				Document doc = Code.fileToDom(xmlOut);
+				
+	//			System.out.println(XmlUtils.domToString(doc));
+	//			System.out.println();
 			
-			xmlFilename = Code.getFullName(xmlCompare + xmlFilename);
-			common.Code.compare("File: " + cblFilename, xmlFilename, doc);
+				System.out.println(xmlCompare + xmlFilename);
+				xmlFilename = Code.getFullName(xmlCompare + xmlFilename);
+				common.Code.compare("File: " + cblFilename, xmlFilename, doc);
+			}
 			
 		}
 	}

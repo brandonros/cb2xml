@@ -121,10 +121,10 @@ public class CopyBookAnalyzer extends DepthFirstAdapter {
 
 	// exit root element, save XML as file
 	public void outARecordDescription(ARecordDescription node) {
-		int lastPos = 1;
+		Positions lastPos = new Positions();
 		for (Item itm : copybook.getChildItems()) {
 			if (itm.levelNumber == 1) {
-				postProcessNode(itm, 1);
+				postProcessNode(itm, new Positions());
 			} else {
 				lastPos = postProcessNode(itm, lastPos);
 			}
@@ -675,13 +675,12 @@ public class CopyBookAnalyzer extends DepthFirstAdapter {
 	 * as well as the OCCURS declarations
 	 */
 
-	private int postProcessNode(Item element, int startPos) {
-	    int actualLength = 0;
+	private Positions postProcessNode(Item element, Positions position) {
+	    int storageLength = 0;
 		int displayLength = 0;
 		int assumedDigits = 0;
 		int doubleByteChars = 0;
-		int newPos;
-		int oldEnd = startPos;
+		Positions oldEnd = position.clonePos();
 
 		String usage = getUsage(element);
 		
@@ -702,48 +701,70 @@ public class CopyBookAnalyzer extends DepthFirstAdapter {
 
 			if (redefinedElement != null 
 			&& redefinedElement.position > 0) {
-				startPos = redefinedElement.position ;
+				position.set(redefinedElement.position, redefinedElement.displayPosition);
 				redefinedElement.fieldRedefined = true; 
-			} else if (redefinedElement != null && redefinedElement.levelNumber == 1) {
-				startPos = 0;
-				redefinedElement.fieldRedefined = true; 
+//			} else if (redefinedElement != null && redefinedElement.levelNumber == 1) {
+//				position.set(0,  0);
+//
+//				redefinedElement.fieldRedefined = true; 
 			} else {
 				System.out.println(">> position error " + element.getFieldName() + " %% "+ redefinedName);
 			}
 		}
 
-		newPos = startPos;
+		Positions newPos = position.clonePos();
 		if (element.displayLength > 0) {
 			displayLength = element.displayLength;
 			assumedDigits = Math.max(0, element.assumedDigits);
 			doubleByteChars = Math.max(0, element.doubleByteChars);
+			
+			storageLength = setLength(element, ! element.signed, 
+					displayLength, assumedDigits, doubleByteChars);
+			displayLength = element.displayLength;
 		} else {
-			for (Item itm : element.getChildItems()) {
-				newPos = postProcessNode(itm, newPos);
-				displayLength = newPos - startPos;
+			List<? extends Item> childItems = element.getChildItems();
+			if (childItems.size() == 0) {
+				storageLength = setLength(element, ! element.signed, 
+						displayLength, assumedDigits, doubleByteChars);
+				displayLength = element.displayLength;
+			} else {
+				for (Item itm : childItems) {
+					newPos = postProcessNode(itm, newPos);
+					displayLength = Math.max(displayLength, newPos.display - position.display);
+					storageLength  = Math.max(storageLength, newPos.storage - position.storage);
+				}
+				element.displayLength = displayLength;
+				element.storageLength = storageLength;
 			}
 		}
-		actualLength = setLength(element, ! element.signed, 
-				displayLength, assumedDigits, doubleByteChars);
+//		actualLength = setLength(element, ! element.signed, 
+//				displayLength, assumedDigits, doubleByteChars);
+//		displayLength = element.displayLength;
 
 		int syncOn = 1;
+		int startPos = position.storage;
 		int remainder;
 		if (element.sync) {
-			syncOn = numDef.getSyncAt(usage, actualLength);
-//		}
-//		if (syncOn > 1) {
+			syncOn = numDef.getSyncAt(usage, storageLength);
+
 			remainder = (startPos - 1) % syncOn;
 			if (remainder >0) {
 				startPos = startPos - remainder + syncOn;
+				position.storage = startPos;
 			}
 		}
 		element.position = startPos;
+		element.displayPosition = position.display;
 
 		if (element.occurs >= 0) {
-		    actualLength *= element.occurs;
+		    storageLength *= element.occurs;
+		    displayLength *= element.occurs;
 		}
+		position.storage += storageLength;
+		position.display += displayLength;
 
-		return Math.max(oldEnd, startPos + actualLength);
+		position.max(oldEnd);
+		return position;
 	}
 
 
@@ -807,5 +828,31 @@ public class CopyBookAnalyzer extends DepthFirstAdapter {
 //	public static void setNumericDetails(NumericDefinition numericDef) {
 //		defaultNumDef = numericDef;
 //	}
+	
+	private static class Positions {
+		int storage=1, display=1;
+		
+		public Positions set(int actual, int display) {
+			this.storage = actual;
+			this.display = display;
+			return this;
+		}
+
+		Positions clonePos() {		
+			return new Positions().set(storage, display);
+		}
+		
+		void max(Positions p) {
+			storage = Math.max(storage, p.storage);
+			display = Math.max(display, p.display);
+		}
+		
+		
+		void add(Positions p) {
+			storage  +=  p.storage;
+			display += p.display;
+		}
+
+	}
 
 }

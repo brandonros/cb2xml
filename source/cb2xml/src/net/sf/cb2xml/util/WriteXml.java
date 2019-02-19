@@ -232,6 +232,7 @@ public class WriteXml {
 		if (newFormat) {
 			writeAttr(writer, Cb2xmlConstants.NUMERIC, item.getNumericClass());
 			writeAttr(writer, Cb2xmlConstants.SIGN_CLAUSE, item.getSignClause());
+			writeAttr(writer, Cb2xmlConstants.DISPLAY_POSITION, item.getDisplayPosition());
 		} else {
 			writeAttr(writer, Cb2xmlConstants.NUMERIC, item.getNumericClass().numeric);
 			writeAttr(writer, Cb2xmlConstants.EDITTED_NUMERIC, item.getNumericClass().editNumeric);

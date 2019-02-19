@@ -103,6 +103,7 @@ public interface IItem extends IItemBase {
 	 */
 	public abstract int getDisplayLength();
 
+	public abstract int getDisplayPosition();
 
 //	public boolean isEditedNumeric();
 
@@ -202,4 +203,6 @@ public interface IItem extends IItemBase {
 	 * is the usage inherited from an upper level
 	 */
 	public boolean isBlankWhenZero();
+
+//	public int getDoubleByteChars();
 }

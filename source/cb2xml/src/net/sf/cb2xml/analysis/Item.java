@@ -57,7 +57,7 @@ public class Item extends BaseItem implements IItemJrUpd {
 	int occurs=NULL_INT_VALUE;
 	int occursMin=NULL_INT_VALUE;
 	String picture;
-	int position;
+	int position, displayPosition;
 	String redefines;
 	int scale;
 	int storageLength;
@@ -69,8 +69,7 @@ public class Item extends BaseItem implements IItemJrUpd {
 	private final String fieldName;
 	
 	
-	int type; //JRecord Type Identifier
-	//Item() {}
+	int type;
 	
 	public Item(BaseItem parentItem, int levelNumber, String levelStr, String name) {
 		this.parentItem = parentItem;
@@ -104,7 +103,7 @@ public class Item extends BaseItem implements IItemJrUpd {
 		signClause         = item.getSignClause();
 		
 		if (item instanceof IItemJr) {
-			type = ((IItemJr) item).getType();
+			type = ((IItemJr) item).getType();			
 		}
 	}
 	
@@ -188,6 +187,14 @@ public class Item extends BaseItem implements IItemJrUpd {
 		return dependingOn;
 	}
 	
+	/**
+	 * @return the displayPosition
+	 */
+	@Override
+	public final int getDisplayPosition() {
+		return displayPosition;
+	}
+
 	@Override
 	public int getDisplayLength() {
 		return displayLength;
@@ -252,6 +259,8 @@ public class Item extends BaseItem implements IItemJrUpd {
 	public String getValue() {
 		return value;
 	}
+
+
 	@Override
 	public boolean isFieldRedefined() {
 		return fieldRedefined;
@@ -305,6 +314,8 @@ public class Item extends BaseItem implements IItemJrUpd {
 		return type;
 	}
 
+
+
 	/**
 	 * Set the JRecord Type id. For use in JRecord !!!
 	 */
@@ -312,5 +323,4 @@ public class Item extends BaseItem implements IItemJrUpd {
 	public void setType(int type) {
 		this.type = type;
 	}
-
 }
