@@ -86,7 +86,7 @@ public class TstCb2xml01 {
 			"cpyPicNG03.cbl",
 	};
 
-	private String[] xxx = {"cpyOccursDependingOn42.cbl"};
+//	private String[] xxx = {"cpyOccursDependingOn42.cbl"};
 	
 	@Test
 	public void test1() throws IOException, SAXException, ParserConfigurationException {

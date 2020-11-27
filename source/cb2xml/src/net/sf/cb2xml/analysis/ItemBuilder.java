@@ -32,6 +32,13 @@ public class ItemBuilder {
 		this.item.displayLength = displayLength;
 	}
 	/**
+	 * @param displayLength the displayLength to set
+	 */
+	public void setDisplayPosition(int displayPosition) {
+		this.item.displayPosition = displayPosition;
+	}
+
+	/**
 	 * @param levelString the levelString to set
 	 */
 	public void setLevelString(String levelString) {
@@ -115,6 +122,8 @@ public class ItemBuilder {
 	public void setStorageLength(int storageLength) {
 		this.item.storageLength = storageLength;
 	}
+	
+
 	/**
 	 * @param numericClass the numericClass to set
 	 */
@@ -155,7 +164,7 @@ public class ItemBuilder {
 	 * @return
 	 */
 	public Item build(BaseItem parent) {
-		Item ret = new Item(parent, Integer.parseInt(levelString), levelString, fieldName);
+		Item ret = new Item(parent, levelString == null ? 0 : Integer.parseInt(levelString), levelString, fieldName);
 		
 		ret.set(item);
 		

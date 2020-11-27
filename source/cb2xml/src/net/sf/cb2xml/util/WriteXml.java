@@ -23,14 +23,18 @@ import net.sf.cb2xml.def.IItem;
  */
 public class WriteXml {
 
-	private final boolean newFormat, writeEmptyElements;
+	private final boolean newFormat, writeEmptyElements, recEdit;
 	private final String encoding;
 
 	
 
 	public WriteXml(boolean newFormat, boolean writeEmptyElements, String encoding) {
+		this(newFormat, false, writeEmptyElements, encoding);
+	}
+	public WriteXml(boolean newFormat, boolean recEdit, boolean writeEmptyElements, String encoding) {
 		super();
 		this.newFormat = newFormat;
+		this.recEdit = recEdit;
 		this.writeEmptyElements = writeEmptyElements;
 		this.encoding = encoding;
 	}
@@ -232,7 +236,9 @@ public class WriteXml {
 		if (newFormat) {
 			writeAttr(writer, Cb2xmlConstants.NUMERIC, item.getNumericClass());
 			writeAttr(writer, Cb2xmlConstants.SIGN_CLAUSE, item.getSignClause());
-			writeAttr(writer, Cb2xmlConstants.DISPLAY_POSITION, item.getDisplayPosition());
+			if (! recEdit) {
+				writeAttr(writer, Cb2xmlConstants.DISPLAY_POSITION, item.getDisplayPosition());
+			}
 		} else {
 			writeAttr(writer, Cb2xmlConstants.NUMERIC, item.getNumericClass().numeric);
 			writeAttr(writer, Cb2xmlConstants.EDITTED_NUMERIC, item.getNumericClass().editNumeric);

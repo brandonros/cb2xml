@@ -89,6 +89,7 @@ public class Item extends BaseItem implements IItemJrUpd {
 		numericClass       = item.getNumericClass();
 		dependingOn        = item.getDependingOn();
 		displayLength      = item.getDisplayLength();
+		displayPosition    = item.getDisplayPosition();
 		usage              = item.getUsage();
 		occurs             = item.getOccurs();
 		occursMin          = item.getOccursMin();
@@ -101,6 +102,7 @@ public class Item extends BaseItem implements IItemJrUpd {
 		value              = item.getValue();
 		fieldRedefined     = item.isFieldRedefined();
 		signClause         = item.getSignClause();
+		inheritedUsage     = item.isInheritedUsage();
 		
 		if (item instanceof IItemJr) {
 			type = ((IItemJr) item).getType();			
@@ -108,7 +110,7 @@ public class Item extends BaseItem implements IItemJrUpd {
 	}
 	
 	
-	
+
 	/* (non-Javadoc)
 	 * @see net.sf.cb2xml.def.IItem#getParent()
 	 */
