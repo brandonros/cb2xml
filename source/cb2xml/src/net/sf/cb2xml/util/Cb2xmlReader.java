@@ -108,6 +108,9 @@ public class Cb2xmlReader {
 	private void processItem(ReaderBuilder rBldr) {
 		ItemBuilder itmBldr = rBldr.itmBldr;
 		int val;
+		
+		
+		itmBldr.newItem();
 		itmBldr.setLevelString(rBldr.getAttr(Cb2xmlConstants.LEVEL));
 		itmBldr.setFieldName(rBldr.getAttr(Cb2xmlConstants.NAME));
 		itmBldr.setBlankWhenZero(rBldr.getBooleanAttr(Cb2xmlConstants.BLANK_WHEN_ZERO));

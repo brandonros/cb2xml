@@ -12,7 +12,9 @@ public class ItemBuilder {
 
 	private String fieldName, levelString;
 
-
+	public void newItem() {
+		item = new Item(null, 1, "01", "");
+	}
 	/**
 	 * @param justified the justified to set
 	 */
