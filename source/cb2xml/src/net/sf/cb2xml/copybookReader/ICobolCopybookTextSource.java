@@ -2,7 +2,7 @@ package net.sf.cb2xml.copybookReader;
 
 import java.io.Reader;
 
-public interface IReadCobolCopybook {
+public interface ICobolCopybookTextSource {
 
 	/**
 	 * @return the Cobol copybookName as supplied by the user

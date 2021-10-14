@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * <b>Purpose:</b> Read one or more Cobol copybooks and expand basic <i>Cobol Copy</i>
+ * <b>Purpose:</b> Read one or more COBOL copybooks and expand basic <i>COBOL Copy</i>
  * statements (<i>Copy Replacing</i> is <b>not</b> supported).
  * 
- * Usage:
+ * <p.<b>Usage:</b>
  * <pre>
  *		ReadCobolCopybook copybook = new ReadCobolCopybook()
  *				.setDirectoriesToSearch("/home/bruce/work/Cobol/CopyBooks")
@@ -39,12 +39,12 @@ import java.util.Properties;
  *					.setIndent(true)
  *					.asXmlString()
  *				);
- * </pre> 
+ * </pre></p>
  * 
  * @author Bruce Martin
  *
  */
-public class ReadCobolCopybook implements IReadCobolCopybook {
+public class ReadCobolCopybook implements ICobolCopybookTextSource {
 
 	private StringBuilder copybookData = new StringBuilder();
 	private String copybookName;
@@ -177,6 +177,7 @@ public class ReadCobolCopybook implements IReadCobolCopybook {
 	 */
 	@Override
 	public String getCopybookName() {
+		if (copybookName ==null) { throw new RuntimeException("The Copybook name has not be set !!!");}
 		return copybookName;
 	}
 

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
-import net.sf.cb2xml.copybookReader.IReadCobolCopybook;
-import net.sf.cb2xml.copybookReader.ReadBasicCobolCopybook;
+import net.sf.cb2xml.copybookReader.ICobolCopybookTextSource;
+import net.sf.cb2xml.copybookReader.BasicReadCobolCopybook;
 import net.sf.cb2xml.def.Cb2xmlConstants;
 import net.sf.cb2xml.sablecc.lexer.Lexer;
 import net.sf.cb2xml.sablecc.lexer.LexerException;
@@ -50,7 +50,7 @@ public abstract class DoCobolAnalyse implements Runnable  {
 	private LexerException lexerException;
 	private IOException ioException;
 	private ParserException parseException;
-	private IReadCobolCopybook copyBookReader;
+	private ICobolCopybookTextSource copyBookSource;
 	
 
 	public DoCobolAnalyse(String name) {
@@ -58,31 +58,31 @@ public abstract class DoCobolAnalyse implements Runnable  {
 		this.name = name;
 	}
 
-	public DoCobolAnalyse setCopybookReader(IReadCobolCopybook copyBookReader,
+	public DoCobolAnalyse setCopybookReader(ICobolCopybookTextSource copyBookReader,
 			int cblLineFormat, int firstColumn, int lastColumn,
 			String copybookName, Reader r) throws IOException {
 		if (copyBookReader == null) {
 			switch (cblLineFormat) {
 			case Cb2xmlConstants.FREE_FORMAT:
-				copyBookReader = ReadBasicCobolCopybook.newCopybookReader(r, copybookName)
+				copyBookReader = BasicReadCobolCopybook.newCopybookReader(r, copybookName)
 										.setColumns( 0, END_COLS[Cb2xmlConstants.USE_LONG_LINE]);
 				break;
 			case Cb2xmlConstants.USE_STANDARD_COLUMNS:
 			case Cb2xmlConstants.USE_COLS_6_TO_80:
 			case Cb2xmlConstants.USE_LONG_LINE:
-				copyBookReader = ReadBasicCobolCopybook.newCopybookReader(r, copybookName)
+				copyBookReader = BasicReadCobolCopybook.newCopybookReader(r, copybookName)
 										.setColumns( FIRST_COBOL_COLUMN, END_COLS[cblLineFormat]);
 				break;
 			case Cb2xmlConstants.USE_SUPPLIED_COLUMNS:
-				copyBookReader = ReadBasicCobolCopybook.newCopybookReader(r, copybookName)
+				copyBookReader = BasicReadCobolCopybook.newCopybookReader(r, copybookName)
 						.setColumns( firstColumn, lastColumn);
 			    break;
 			default:
-				copyBookReader = ReadBasicCobolCopybook.newReaderUsePropertiesFile(r, copybookName);
+				copyBookReader = BasicReadCobolCopybook.newReaderUsePropertiesFile(r, copybookName);
 				break;
 			}
 		}
-		this.copyBookReader = copyBookReader;
+		this.copyBookSource = copyBookReader;
 		return this;
 	}
 
@@ -94,10 +94,10 @@ public abstract class DoCobolAnalyse implements Runnable  {
 		Reader sr;
 		long tSize = threadSize;
 		
-		sr = copyBookReader.getFreeFormatCopybookReader();
+		sr = copyBookSource.getFreeFormatCopybookReader();
 		
 		if (tSize < 0) {
-			int length = copyBookReader.length();
+			int length = copyBookSource.length();
 			if (length > 0) {
 				threadSize = calculateThreadSize(length);
 			} else if (length < 0) {
@@ -144,7 +144,7 @@ public abstract class DoCobolAnalyse implements Runnable  {
 					DebugLexer lexer = new DebugLexer(pbr);
 					parser = new Parser(lexer);
 					try {
-						ast = parser.parse(copyBookReader);
+						ast = parser.parse(copyBookSource);
 					} catch (ParserException pe) {
 						StringBuffer buffer = lexer.getBuffer();
 						String s = "";
@@ -155,7 +155,7 @@ public abstract class DoCobolAnalyse implements Runnable  {
 					}
 				} else {
 					parser = new Parser(new Lexer(pbr));
-					ast = parser.parse(copyBookReader);
+					ast = parser.parse(copyBookSource);
 				}
 	
 	

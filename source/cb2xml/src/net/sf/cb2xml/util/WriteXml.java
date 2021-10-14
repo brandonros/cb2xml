@@ -9,10 +9,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 
-import net.sf.cb2xml.analysis.Copybook;
 import net.sf.cb2xml.analysis.Item;
 import net.sf.cb2xml.def.Cb2xmlConstants;
 import net.sf.cb2xml.def.ICondition;
+import net.sf.cb2xml.def.ICopybook;
 import net.sf.cb2xml.def.IItem;
 
 /**
@@ -47,7 +47,7 @@ public class WriteXml {
 	 * @throws XMLStreamException
 	 * @throws IOException 
 	 */
-	public final void writeCopybook(Writer fileWriter, Copybook copybook, boolean indent) throws XMLStreamException, IOException {
+	public final void writeCopybook(Writer fileWriter, ICopybook copybook, boolean indent) throws XMLStreamException, IOException {
 		XMLOutputFactory xmlFactory = XMLOutputFactory.newInstance();
 		
 		XMLStreamWriter writer = xmlFactory.createXMLStreamWriter(fileWriter);
@@ -57,13 +57,13 @@ public class WriteXml {
 		fileWriter.close();
 	}
 
-	public final void writeCopybook(Result result, Copybook copybook) throws XMLStreamException, IOException {
+	public final void writeCopybook(Result result, ICopybook copybook) throws XMLStreamException, IOException {
 		XMLOutputFactory xmlFactory = XMLOutputFactory.newInstance();
 		
 		writeCopybook(xmlFactory.createXMLStreamWriter(result), copybook, false);
 	}
 
-	public final void writeCopybook(XMLStreamWriter xmlWriter, Copybook copybook, boolean indent) throws XMLStreamException {
+	public final void writeCopybook(XMLStreamWriter xmlWriter, ICopybook copybook, boolean indent) throws XMLStreamException {
 
 		if (indent) {
 			xmlWriter = new IndentXmlWriter(xmlWriter);
@@ -226,7 +226,7 @@ public class WriteXml {
 		writeAttr(writer, Cb2xmlConstants.USAGE, item.getUsage());
 		writeAttr(writer, Cb2xmlConstants.JUSTIFIED, item.getJustified());
 		writeAttr(writer, Cb2xmlConstants.POSITION, item.getPosition());
-		writeAttr(writer, Cb2xmlConstants.STORAGE_LENGTH, item.getStorageLength(), -1);
+		writeAttr(writer, Cb2xmlConstants.STORAGE_LENGTH, item.getStorageLength(), 0);
 		writeAttr(writer, Cb2xmlConstants.DISPLAY_LENGTH, item.getDisplayLength(), -1);
 
 		if (item.getScale() != 0) {

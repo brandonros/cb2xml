@@ -143,7 +143,7 @@ public class BasicNumericDefinition implements NumericDefinition {
 	
 	public int chkStorageLength(int storageLength, String usage) {
 		int ret = storageLength;
-		if (storageLength == 0) {
+		if (storageLength <= 0) {
 			if  (Cb2xmlConstants.COMP_1.equalsIgnoreCase(usage)) {
 				ret = 10;
 			} else if  (Cb2xmlConstants.COMP_2.equalsIgnoreCase(usage)) {

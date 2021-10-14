@@ -1,20 +1,49 @@
 package net.sf.cb2xml.analysis;
 
 import net.sf.cb2xml.def.Cb2xmlConstants;
+import net.sf.cb2xml.def.IItem;
 
 public class ItemBuilder {
 
 	public static ItemBuilder newBuilder() {
-		return new ItemBuilder();
+		return new ItemBuilder(null);
+	}
+	
+	/**
+	 * This will creates the item you supplied
+	 * @param item item to be <b>updated</B>
+	 * @return
+	 */
+	public static ItemBuilder newItemUpdater(Item item) {
+		return new ItemBuilder(item);
 	}
 	
 	private Item item = new Item(null, 1, "01", "");
 
 	private String fieldName, levelString;
+	
+	public ItemBuilder() {
+		this(null);
+	}
+
+	
+	private ItemBuilder(Item item) {
+		this.item = item == null ?  new Item(null, 1, "01", "") : item;
+	}
 
 	public void newItem() {
 		item = new Item(null, 1, "01", "");
 	}
+	/**
+	 * @param item
+	 * @see net.sf.cb2xml.analysis.Item#set(net.sf.cb2xml.def.IItem)
+	 */
+	public void setFrom(IItem item) {
+		this.item.set(item);
+		fieldName = item.getFieldName();
+		levelString = item.getLevelString();
+	}
+
 	/**
 	 * @param justified the justified to set
 	 */
@@ -157,7 +186,11 @@ public class ItemBuilder {
 		this.fieldName = fieldName;
 	}
 	
-	protected Item getItem() {
+	/**
+	 * 
+	 * @return the current Item being updated
+	 */
+	public Item getItem() {
 		return item;
 	}
 

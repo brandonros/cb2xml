@@ -9,9 +9,10 @@ import javax.xml.transform.Result;
 
 import net.sf.cb2xml.def.Cb2xmlConstants;
 import net.sf.cb2xml.def.IBasicDialect;
-import net.sf.cb2xml.def.ICopybook;
+import net.sf.cb2xml.def.ICopybookJrUpd;
 import net.sf.cb2xml.sablecc.lexer.LexerException;
 import net.sf.cb2xml.sablecc.parser.ParserException;
+import net.sf.cb2xml.walker.CobolCopybookWalker;
 
 public interface IBasicCb2XmlBuilder {
 
@@ -79,7 +80,7 @@ public interface IBasicCb2XmlBuilder {
 	 * Return the Cobol copybook as an <i>Item Tree</i>.
 	 * @return Cobol Item Tree 
 	 */
-	ICopybook asCobolItemTree();
+	ICopybookJrUpd asCobolItemTree();
 
 	/**
 	 * Convert the Cobol-Copybook to a Xml and return it as a StringString
@@ -110,5 +111,12 @@ public interface IBasicCb2XmlBuilder {
 	 * @param result Xml-Result to update
 	 */
 	void writeXml(Result result) throws XMLStreamException, LexerException, IOException, ParserException;
+
+	/**
+	 * Create a Cobol-Copybook-Walker. This class lets you walk the Cobol Copybook with 
+	 * a supplied listner
+	 * @return  Cobol-Copybook-Walker
+	 */
+	CobolCopybookWalker asCobolCopybookWalker();
 
 }

@@ -9,7 +9,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Properties;
 
-public class ReadBasicCobolCopybook implements IReadCobolCopybook {
+public class BasicReadCobolCopybook implements ICobolCopybookTextSource {
 
 	private String copybookDetails;
 	private int firstColumn;
@@ -17,7 +17,7 @@ public class ReadBasicCobolCopybook implements IReadCobolCopybook {
 	private final Reader reader;
 	private final String copybookName;
 	
-	public static ReadBasicCobolCopybook newReaderUsePropertiesFile(Reader reader, String copybookName) throws IOException {
+	public static BasicReadCobolCopybook newReaderUsePropertiesFile(Reader reader, String copybookName) throws IOException {
 	  	int columnStart = 6;
 	  	int columnEnd = 72;
 	  	File properties = new File("cb2xml.properties");
@@ -47,24 +47,24 @@ public class ReadBasicCobolCopybook implements IReadCobolCopybook {
 	  	}
 	  	System.err.println("*** using start column = " + columnStart + ", end column = " + columnEnd);
 	  	
-		return new ReadBasicCobolCopybook(reader, copybookName)
+		return new BasicReadCobolCopybook(reader, copybookName)
 						.setColumns(columnStart, columnEnd);
 	}
 	
-	public static ReadBasicCobolCopybook newCopybookReader(String fileName) throws FileNotFoundException {
-		return new ReadBasicCobolCopybook(new FileReader(fileName), new File(fileName) .getName());
+	public static BasicReadCobolCopybook newCopybookReader(String fileName) throws FileNotFoundException {
+		return new BasicReadCobolCopybook(new FileReader(fileName), new File(fileName) .getName());
 	}
-	public static ReadBasicCobolCopybook newCopybookReader(Reader reader, String copybookName) {
-		return new ReadBasicCobolCopybook(reader, copybookName);
+	public static BasicReadCobolCopybook newCopybookReader(Reader reader, String copybookName) {
+		return new BasicReadCobolCopybook(reader, copybookName);
 	}
 	
-	public ReadBasicCobolCopybook(Reader reader, String copybookName) {
+	public BasicReadCobolCopybook(Reader reader, String copybookName) {
 		super();
 		this.reader = reader;
 		this.copybookName = copybookName;
 	}
 	
-	public ReadBasicCobolCopybook setColumns(int firstColumn, int lastColumn) throws IOException {
+	public BasicReadCobolCopybook setColumns(int firstColumn, int lastColumn) throws IOException {
 		IReadLine readCopybook = new ReadColumnFromLine(reader, firstColumn, lastColumn);
 		
 		this.firstColumn = firstColumn;

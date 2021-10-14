@@ -4,7 +4,7 @@ package net.sf.cb2xml.sablecc.parser;
 
 import net.sf.cb2xml.sablecc.lexer.*;
 import net.sf.cb2xml.sablecc.node.*;
-import net.sf.cb2xml.copybookReader.IReadCobolCopybook;
+import net.sf.cb2xml.copybookReader.ICobolCopybookTextSource;
 import net.sf.cb2xml.sablecc.analysis.*;
 import java.util.*;
 
@@ -112,7 +112,7 @@ public class Parser
         return this.converter.index;
     }
 
-    public Start parse(IReadCobolCopybook copyBookReader) throws ParserException, LexerException, IOException
+    public Start parse(ICobolCopybookTextSource copyBookReader) throws ParserException, LexerException, IOException
     {
         push(0, null, true);
         List<Node> ign = null;

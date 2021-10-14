@@ -28,8 +28,8 @@ import java.util.Properties;
  * 
  * @author Peter Thomas
  * 
- * @deprecated has been replaced by {@link net.sf.cb2xml.copybookReader.IReadCobolCopybook} interface and its
- * implementations {@link net.sf.cb2xml.copybookReader.ReadCobolCopybook} and {@link net.sf.cb2xml.copybookReader.ReadBasicCobolCopybook}
+ * @deprecated has been replaced by {@link net.sf.cb2xml.copybookReader.ICobolCopybookTextSource} interface and its
+ * implementations {@link net.sf.cb2xml.copybookReader.ReadCobolCopybook} and {@link net.sf.cb2xml.copybookReader.BasicReadCobolCopybook}
  */
 public class CobolPreprocessor {
 

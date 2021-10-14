@@ -38,7 +38,7 @@ public class Item extends BaseItem implements IItemJrUpd {
 	/* end internal use */
 
 
-	final int levelNumber;
+	final int levelNumber, relativeLevel;
 	Cb2xmlConstants.Justified justified = Cb2xmlConstants.Justified.NOT_JUSTIFIED; 
 	
 	String dependingOn;
@@ -77,9 +77,14 @@ public class Item extends BaseItem implements IItemJrUpd {
 		this.levelString = levelStr;
 		this.fieldName = name;
 		
+		int rLevel = 0;
 		if (parentItem != null) {
 			parentItem.addItem(this);
+			if (parentItem instanceof Item) {
+				rLevel = ((Item) parentItem).relativeLevel + 1;
+			}
 		}
+		this.relativeLevel = rLevel;
 	}
 	
 	public void set(IItem item) {
@@ -142,6 +147,14 @@ public class Item extends BaseItem implements IItemJrUpd {
 		return levelNumber;
 	}
 	
+	/**
+	 * @return the relativeLevel
+	 */
+	@Override
+	public int getRelativeLevel() {
+		return relativeLevel;
+	}
+
 	@Override
 	public String getFieldName() {
 		return fieldName;
