@@ -76,8 +76,10 @@ public class PostProcess {
 				}
 			}
 
-			if (redefinedElement != null 
-			&& redefinedElement.position > 0) {
+			if (redefinedElement == null) {
+				System.out.println("\n>> " + element.getFieldName() 
+				+ ": Could not find the redefined field  >> "+ redefinedName);
+			} else if (redefinedElement.position >= 0) {
 				position.set(redefinedElement.position, redefinedElement.displayPosition);
 				redefinedElement.fieldRedefined = true; 
 //			} else if (redefinedElement != null && redefinedElement.levelNumber == 1) {
@@ -85,7 +87,8 @@ public class PostProcess {
 //
 //				redefinedElement.fieldRedefined = true; 
 			} else {
-				System.out.println(">> position error " + element.getFieldName() + " %% "+ redefinedName);
+				System.out.println("\n>> " + element.getFieldName() 
+					+ ": error determining record position of the field being redefined  >> "+ redefinedName);
 			}
 		}
 

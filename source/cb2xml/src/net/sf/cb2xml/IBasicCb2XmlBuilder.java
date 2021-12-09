@@ -61,6 +61,7 @@ public interface IBasicCb2XmlBuilder {
 	 * Set the Cobol Dialect
 	 * @param dialect Cobol Dialect, options are: <ul>
 	 *  <li><b>DialectManager.MAINFRAME_COBOL</b>
+	 *  <li><b>DialectManager.MAINFRAME_COBOL_64_BIT</b> for 64 bit pointers
 	 *  <li><b>DialectManager.GNU_COBOL</b>
 	 *  <li><b>DialectManager.FUJITSU_COBOL</b>
 	 * </ul>

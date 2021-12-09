@@ -20,7 +20,7 @@ import common.Code;
 public class TstCb2xml31a {
 	
 
-	private static final boolean DO_COMPARE = false; 
+	private static final boolean DO_COMPARE = true; 
 	
 	private static final String TEMP_DIR = DO_COMPARE
 			? System.getProperty("java.io.tmpdir") + File.separator
@@ -66,6 +66,10 @@ public class TstCb2xml31a {
 	
 	private String[] COPYBOOK_LIST6 = {
 			"cpyUtf8.cbl"
+	};
+	
+	private String[] COPYBOOK_LIST7 = {
+			"cpyPointer.cbl"
 	};
 
 
@@ -121,26 +125,41 @@ public class TstCb2xml31a {
 		tstArray(COPYBOOK_LIST6, "cobolCopybook/", "utf-8");
 	}
 
+	@Test
+	public void testArray7() throws IOException, SAXException, ParserConfigurationException, ParserException, LexerException {
+		tstArray(COPYBOOK_LIST7, "cobolCopybook/", "utf-8", true, false);
+		tstArray(COPYBOOK_LIST7, "cobolCopybook/", "utf-8", true, true);
+	}
+	
+	
 
 	public void tstArray(String[] copybooks, String font) 
 			throws IOException, SAXException, ParserConfigurationException, ParserException, LexerException  {
-		tstArray(copybooks, "cobolCopybook/", font);
+		tstArray(copybooks, "cobolCopybook/", font, true, false);
 	}
 
 
 	public void tstArray(String[] copybooks,  String dir, String font) throws IOException, SAXException, ParserConfigurationException, ParserException, LexerException  {
-		tstArray(copybooks, dir, font, true);
+		tstArray(copybooks, dir, font, true, false);
 	}
 
 
-	public void tstArray(String[] copybooks,  String dir, String font, boolean newFormat) throws IOException, SAXException, ParserConfigurationException, ParserException, LexerException  {
+	public void tstArray(String[] copybooks,  String dir, String font, boolean newFormat)
+			throws IOException, SAXException, ParserConfigurationException, ParserException, LexerException  {
+		tstArray(copybooks, dir, font, newFormat, false);
+	}
+
+
+	public void tstArray(String[] copybooks,  String dir, String font, boolean newFormat, boolean bit64)
+			throws IOException, SAXException, ParserConfigurationException, ParserException, LexerException  {
 		String cblFilename, xmlFilename, xmlOut;
 		String tmpDir = DO_COMPARE ? TEMP_DIR : TEMP_DIR + "/xmlCopybookFormated/"; 
 		System.out.println(tmpDir);
 		String xmlCompare = "xmlCopybookFormated/";
 		
 		for (String c : copybooks) {
-			xmlFilename = "xmlCpy" + c.substring(3, c.length() - 3) + "Xml";
+			String ext = bit64 ? "64bit.Xml" : "Xml";
+			xmlFilename = "xmlCpy" + c.substring(3, c.length() - 3) + ext;
 			xmlOut = tmpDir + xmlFilename;
 			System.out.println("Test: " + c + " " + xmlFilename + " " + xmlOut);
 			cblFilename = Code.getFullName(dir + c);
@@ -150,6 +169,10 @@ public class TstCb2xml31a {
 				args = new String[] {
 					"-cobol", cblFilename, "-xml", xmlOut, Parms.INDENT_XML_PRM
 				};
+			} else if (bit64) {
+				args = new String[] {
+						"-Dialect", "Mainframe_64_Bit", "-cobol", cblFilename, "-xml", xmlOut, "-font", font, Parms.INDENT_XML_PRM
+					};
 			} else if (newFormat) {
 				args = new String[] {
 						"-cobol", cblFilename, "-xml", xmlOut, "-font", font, Parms.INDENT_XML_PRM

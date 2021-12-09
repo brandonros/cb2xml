@@ -55,7 +55,7 @@ public class ReadCobolCopybook implements ICobolCopybookTextSource {
 	
 	private List<String> directoriesToSearch; // = new ArrayList<String>();
 	private List<CopybookDtls> copybookDtls = new ArrayList<CopybookDtls>();
-	private int lineNumber = 0, readerNumber = 1;
+	private int lineNumber = 0, readerNumber = 1, freeFormatTextNumber=1;
 	
 	/**
 	 * Set the exact Cobol Columns to be used. In the old standard for COBOL only Columns 6-72 are
@@ -224,13 +224,20 @@ public class ReadCobolCopybook implements ICobolCopybookTextSource {
 	 * @throws IOException any io exception that occurs during the read
 	 */
 	public ReadCobolCopybook addCobolCopybook(Reader copybookReader) throws IOException {
+		readACopybook(copybookReader, copybookData, getDirsToSearch());
+		return this;
+	}
+
+	/**
+	 * @return
+	 */
+	protected List<String> getDirsToSearch() {
 		List<String> dirsToSearch = directoriesToSearch;
 		if (dirsToSearch == null) {
 			dirsToSearch = new ArrayList<String>(2);
 			dirsToSearch.add(".");
 		}
-		readACopybook(copybookReader, copybookData, dirsToSearch);
-		return this;
+		return dirsToSearch;
 	}
 	
 	/**
@@ -248,9 +255,13 @@ public class ReadCobolCopybook implements ICobolCopybookTextSource {
 	 *  </pre>
 	 * @param cobolText Cobol Field Definition
 	 * @return this ReadCobolCopybook object so the user can chain more commands
+	 * @throws IOException 
 	 */
-	public ReadCobolCopybook addFreeFormatCobolText(CharSequence cobolText) {
-		copybookData.append(cobolText);
+	public ReadCobolCopybook addFreeFormatCobolText(CharSequence cobolText) throws IOException {
+		readCopybook(new StringReader(cobolText.toString()), CopybookColumns.FREE_FORMAT, 
+				copybookData, getDirsToSearch(), 
+				new CopybookDtls("FreeFormatText " + freeFormatTextNumber++, lineNumber, firstColumn));
+		//copybookData.append(cobolText);
 		return this;
 	}
 	
@@ -311,7 +322,7 @@ public class ReadCobolCopybook implements ICobolCopybookTextSource {
 	 */
 	private void readACopybook( String filename, StringBuilder copybook, List<String> dirsToSearch)
 			throws IOException, FileNotFoundException {
-			readCopybook(new FileReader(filename), copybook, dirsToSearch, new CopybookDtls(new File(filename).getName(), lineNumber, firstColumn));
+			readCopybook(new FileReader(filename), copybookColumns, copybook, dirsToSearch, new CopybookDtls(new File(filename).getName(), lineNumber, firstColumn));
 	}
 
 	/**
@@ -324,16 +335,17 @@ public class ReadCobolCopybook implements ICobolCopybookTextSource {
 	 */
 	private void readACopybook( Reader reader, StringBuilder copybook, List<String> dirsToSearch)
 			throws IOException, FileNotFoundException {
-		readCopybook(reader, copybook, dirsToSearch, new CopybookDtls("Reader " + readerNumber++, lineNumber, firstColumn));
+		readCopybook(reader, copybookColumns, copybook, dirsToSearch, new CopybookDtls("Reader " + readerNumber++, lineNumber, firstColumn));
 	}
 	
-	private void readCopybook(Reader reader, StringBuilder copybook, List<String> dirsToSearch, CopybookDtls dtls) throws IOException {
+	private void readCopybook(Reader reader, CopybookColumns cobolColumns, StringBuilder copybook, 
+			List<String> dirsToSearch, CopybookDtls dtls) throws IOException {
 		IReadLine copybookReader;
 		String line, trimmedLine;
 		CopybookDtls parent = copybookDtls.size() == 0 ? null : copybookDtls.get(copybookDtls.size() - 1);
 		
 		addCopybookDtls(dtls);
-		if (copybookColumns == CopybookColumns.FREE_FORMAT) {
+		if (cobolColumns == CopybookColumns.FREE_FORMAT) {
 			copybookReader =  new FreeFormatReader(reader);
 		} else {
 			copybookReader= new ReadColumnFromLine(reader, firstColumn, lastColumn);
@@ -405,6 +417,11 @@ public class ReadCobolCopybook implements ICobolCopybookTextSource {
 	public String toPositionMessage(int lineNumber, int columnNumber) {
 		CopybookDtls dtls;
 		int idx = 0;
+		
+		if (copybookDtls == null || copybookDtls.size() == 0) {
+			return " line-number=" + (lineNumber)
+					+ " column-number=" + (columnNumber);
+		} 
 		
 		do {
 			dtls = copybookDtls.get(idx);
